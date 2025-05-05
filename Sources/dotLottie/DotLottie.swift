@@ -10,8 +10,8 @@ import CoreGraphics
 import Lottie
 import dotLottieLoader
 
-public typealias LottieFile = DotLottieFile
-public typealias DotLottieResponse = (Animation?, LottieFile?) -> Void
+public typealias LottieFile = dotLottieLoader.DotLottieFile
+public typealias DotLottieResponse = (LottieAnimation?, LottieFile?) -> Void
 
 public class DotLottie {
     
@@ -38,7 +38,7 @@ public class DotLottie {
     ///   - cache: Cache type   
     ///   - completion: Lottie Animation
     public static func load(name: String, cache:
-        DotLottieCache = .cache, completion: @escaping DotLottieResponse) {
+                            dotLottieLoader.DotLottieCache = .cache, completion: @escaping DotLottieResponse) {
         DotLottieLoader.load(name: name, cache: cache) { (dotLottieFile) in
             if let dotLottieFile = dotLottieFile {
                 animation(lottie: dotLottieFile, completion: completion)
@@ -55,8 +55,8 @@ public class DotLottie {
     ///   - url: url to load animation from
     ///   - cache: Cache type
     ///   - completion: Lottie Animation
-    public static func load(from url: URL, cache: DotLottieCache = .cache, completion: @escaping DotLottieResponse) {
-        DotLottieLoader.load(from: url, cache: cache) { (dotLottieFile) in
+    public static func load(from url: URL, cache: dotLottieLoader.DotLottieCache = .cache, completion: @escaping DotLottieResponse) {
+        dotLottieLoader.DotLottieLoader.load(from: url, cache: cache) { (dotLottieFile) in
             if let dotLottieFile = dotLottieFile {
                 animation(lottie: dotLottieFile, completion: completion)
             } else {
@@ -79,16 +79,16 @@ public class DotLottie {
             return
         }
         
-        Animation.loadedFrom(url: url, closure: { (animation) in
+        LottieAnimation.loadedFrom(url: url, closure: { (animation) in
             completion(animation, nil)
-        }, animationCache: LRUAnimationCache.sharedCache)
+        }, animationCache: DefaultAnimationCache.sharedCache)
     }
     
     /// Loads Lottie animation with lottie object
     /// - Parameters:
     ///   - lottie: lottie object
     ///   - completion: Lottie animation
-    public static func animation(lottie: DotLottieFile, completion: @escaping DotLottieResponse) {
+    public static func animation(lottie: dotLottieLoader.DotLottieFile, completion: @escaping DotLottieResponse) {
         guard let url = lottie.animations.first, url.isJsonFile else {
             DotLottieUtils.log("""
                     Not a JSON file, instead use:
@@ -98,8 +98,8 @@ public class DotLottie {
             return
         }
         
-        Animation.loadedFrom(url: url, closure: { (animation) in
+        LottieAnimation.loadedFrom(url: url, closure: { (animation) in
             completion(animation, lottie)
-        }, animationCache: LRUAnimationCache.sharedCache)
+        }, animationCache: DefaultAnimationCache.sharedCache)
     }
 }
